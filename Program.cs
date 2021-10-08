@@ -34,6 +34,7 @@ namespace Robo_Panjur {
                     IWebDriver driver = new InternetExplorerDriver();
                     driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
                     void logar() {
+                        driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
                         var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
                         selEscritorio.Click();
                         selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
@@ -49,7 +50,12 @@ namespace Robo_Panjur {
                         txtPassword.SendKeys(Keys.Enter);
 
                         Thread.Sleep(2000);
-                        driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                        try {
+                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                        } catch (Exception) {
+                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                        }
+
                     }
 
                     logar();
@@ -86,9 +92,15 @@ namespace Robo_Panjur {
                         selComarca.Click();
                         selComarca.SendKeys(cidade);
                         selComarca.SendKeys(Keys.Enter);
-                        Thread.Sleep(2000);
+                        Thread.Sleep(3000);
 
-                        driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
+                        try {
+                            driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
+                        } catch (Exception) {
+                            Thread.Sleep(500);
+                            driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
+                        }
+
 
                         var selEmpresa = driver.FindElement(By.Name("selEmpresa"));
                         selEmpresa.Click();
@@ -107,7 +119,7 @@ namespace Robo_Panjur {
                             var alert = driver.SwitchTo().Alert();
                             alert.Accept();
                         } catch {
-                            driver.Navigate().Refresh();
+                            driver.Close();
                         }
 
                         contador++;
