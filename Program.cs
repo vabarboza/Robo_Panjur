@@ -39,8 +39,9 @@ namespace Robo_Panjur {
                         try {
                             driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
                         } catch (WebDriverException) {
-                            Thread.Sleep(500);
-                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                            executa();
+                        } catch (TimeoutException) {
+                            executa();
                         }
 
                         Thread.Sleep(500);
@@ -83,6 +84,8 @@ namespace Robo_Panjur {
                         } catch (WebDriverTimeoutException) {
                             executa();
                         } catch (WebDriverException) {
+                            executa();
+                        } catch (TimeoutException) {
                             executa();
                         }
                     }
@@ -184,7 +187,7 @@ namespace Robo_Panjur {
                     Thread.Sleep(2000);
                     Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
                     Console.WriteLine("Contratos atualizados até o momento: " + contador);
-                    Console.WriteLine("Ultimo contrativo ativo: " + pasta);
+                    Console.WriteLine("Ultimo contrato ativo: " + pasta);
                     driver.Close();
                 }
             }
