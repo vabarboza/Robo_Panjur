@@ -32,108 +32,163 @@ namespace Robo_Panjur {
                     string interacao = list[7];
 
                     IWebDriver driver = new InternetExplorerDriver();
+                    Thread.Sleep(300);
                     driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+
                     void logar() {
-                        driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                        try {
+                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                        } catch (WebDriverException) {
+                            Thread.Sleep(500);
+                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                        }
+
+                        Thread.Sleep(500);
                         var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
                         selEscritorio.Click();
                         selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
+                        Thread.Sleep(500);
                         selEscritorio.SendKeys(Keys.Enter);
 
+                        Thread.Sleep(500);
                         var txtLogin = driver.FindElement(By.Name("txtLogin"));
                         txtLogin.Click();
+                        Thread.Sleep(500);
                         txtLogin.SendKeys("08300494952");
+                        Thread.Sleep(500);
 
+                        Thread.Sleep(500);
                         var txtPassword = driver.FindElement(By.Name("txtPassword"));
                         txtPassword.Click();
+                        Thread.Sleep(500);
                         txtPassword.SendKeys("Natalia@18");
+                        Thread.Sleep(500);
                         txtPassword.SendKeys(Keys.Enter);
 
-                        Thread.Sleep(2000);
+                    }
+
+                    void confimaLogin() {
+                        Thread.Sleep(500);
+                        try {
+                            driver.FindElement(By.Name("frmPesquisa"));
+                        } catch (Exception) {
+                            executa();
+                        }
+                    }
+
+                    void acessaPasta() {
+                        Thread.Sleep(500);
                         try {
                             driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
-                        } catch (Exception) {
-                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                        } catch (WebDriverTimeoutException) {
+                            executa();
+                        } catch (WebDriverException) {
+                            executa();
+                        }
+                    }
+
+                    void preencherForm() {
+                        Thread.Sleep(500);
+                        try {
+                            driver.FindElement(By.Name("txtCNJ"));
+                        } catch (WebDriverException) {
+                            executa();
+                        }
+
+                        Thread.Sleep(500);
+                        var txtCNJ = driver.FindElement(By.Name("txtCNJ"));
+                        var value = txtCNJ.GetAttribute("value");
+                        if (value != cnj) {
+                            driver.ExecuteJavaScript("document.getElementById('txtNoProcesso').value = '" + processo + "'");
+
+                            driver.ExecuteJavaScript("document.getElementById('txtCNJ').value = '" + cnj + "'");
+
+                            driver.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
+
+                            var radJustGratuita = driver.FindElement(By.Name("radJustGratuita"));
+                            radJustGratuita.Click();
+                            Thread.Sleep(200);
+                            radJustGratuita.SendKeys(Keys.ArrowRight);
+                            Thread.Sleep(200);
+
+                            var txtUF = driver.FindElement(By.Name("txtUF"));
+                            txtUF.Click();
+                            txtUF.SendKeys(estado);
+                            txtUF.SendKeys(Keys.Enter);
+                            Thread.Sleep(2000);
+
+                            try {
+                                var selComarca = driver.FindElement(By.Name("selComarca"));
+                                selComarca.Click();
+                                selComarca.SendKeys(cidade);
+                                selComarca.SendKeys(Keys.Enter);
+                            } catch (NoSuchElementException) {
+                                executa();
+                            }
+                            Thread.Sleep(3000);
+
+                            try {
+                                driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
+                            } catch (Exception) {
+                                Thread.Sleep(300);
+                                executa();
+                            }
+
+                            var selEmpresa = driver.FindElement(By.Name("selEmpresa"));
+                            selEmpresa.Click();
+                            selEmpresa.SendKeys("BANCO PAN S/A");
+                            selEmpresa.SendKeys(Keys.Enter);
+                            Thread.Sleep(300);
+
+                            var txtObsAlteracao = driver.FindElement(By.Name("txtObsAlteracao"));
+                            txtObsAlteracao.Click();
+                            txtObsAlteracao.SendKeys(interacao);
+                            Thread.Sleep(1000);
+
+                            var submitUpdate = driver.FindElement(By.Name("submitUpdate"));
+                            try {
+                                Thread.Sleep(300);
+                                submitUpdate.Click();
+                            } catch (WebDriverException) {
+                                Thread.Sleep(300);
+                                executa();
+                            }
+
+
+                            try {
+                                var alert = driver.SwitchTo().Alert();
+                                alert.Accept();
+                            } catch (WebDriverException) {
+                                executa();
+                            }
+
+                            contador++;
+                        } else {
+                            ignorados++;
                         }
 
                     }
 
-                    logar();
-                    try {
-                        driver.FindElement(By.Name("txtCNJ"));
-                    } catch {
+                    void executa() {
                         logar();
+                        Thread.Sleep(500);
+                        confimaLogin();
+                        Thread.Sleep(500);
+                        acessaPasta();
+                        Thread.Sleep(500);
+                        preencherForm();
                     }
 
-                    Thread.Sleep(2000);
-                    var txtCNJ = driver.FindElement(By.Name("txtCNJ"));
-                    var value = txtCNJ.GetAttribute("value");
-
-                    if (value != cnj) {
-                        driver.ExecuteJavaScript("document.getElementById('txtNoProcesso').value = '" + processo + "'");
-
-                        driver.ExecuteJavaScript("document.getElementById('txtCNJ').value = '" + cnj + "'");
-
-                        driver.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
-
-                        var radJustGratuita = driver.FindElement(By.Name("radJustGratuita"));
-                        radJustGratuita.Click();
-                        Thread.Sleep(200);
-                        radJustGratuita.SendKeys(Keys.ArrowRight);
-                        Thread.Sleep(200);
-
-                        var txtUF = driver.FindElement(By.Name("txtUF"));
-                        txtUF.Click();
-                        txtUF.SendKeys(estado);
-                        txtUF.SendKeys(Keys.Enter);
-                        Thread.Sleep(1000);
-
-                        var selComarca = driver.FindElement(By.Name("selComarca"));
-                        selComarca.Click();
-                        selComarca.SendKeys(cidade);
-                        selComarca.SendKeys(Keys.Enter);
-                        Thread.Sleep(3000);
-
-                        try {
-                            driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
-                        } catch (Exception) {
-                            Thread.Sleep(500);
-                            driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
-                        }
-
-
-                        var selEmpresa = driver.FindElement(By.Name("selEmpresa"));
-                        selEmpresa.Click();
-                        selEmpresa.SendKeys("BANCO PAN S/A");
-                        selEmpresa.SendKeys(Keys.Enter);
-                        Thread.Sleep(300);
-
-                        var txtObsAlteracao = driver.FindElement(By.Name("txtObsAlteracao"));
-                        txtObsAlteracao.Click();
-                        txtObsAlteracao.SendKeys(interacao);
-                        Thread.Sleep(300);
-
-                        driver.FindElement(By.Name("submitUpdate")).Click();
-
-                        try {
-                            var alert = driver.SwitchTo().Alert();
-                            alert.Accept();
-                        } catch {
-                            driver.Close();
-                        }
-
-                        contador++;
-                    } else {
-                        ignorados++;
-                    }
-
+                    executa();
 
                     Thread.Sleep(2000);
                     Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
                     Console.WriteLine("Contratos atualizados até o momento: " + contador);
+                    Console.WriteLine("Ultimo contrativo ativo: " + pasta);
                     driver.Close();
                 }
             }
+            Console.WriteLine("Total de contratos atualizado: " + contador);
         }
     }
 }
