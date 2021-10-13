@@ -32,7 +32,7 @@ namespace Robo_Panjur {
                     string comarca = list[6];
                     string interacao = list[7];
 
-                    
+
                     Thread.Sleep(300);
                     driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
 
@@ -46,6 +46,12 @@ namespace Robo_Panjur {
                         }
 
                         Thread.Sleep(500);
+                        try {
+                            driver.FindElement(By.Name("selEscritorio"));
+                        } catch (Exception) {
+                            executa();
+                        }
+
                         var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
                         selEscritorio.Click();
                         selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
