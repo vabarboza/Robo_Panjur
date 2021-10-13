@@ -174,9 +174,10 @@ namespace Robo_Panjur {
                     }
 
                     void executa() {
-                        logar();
                         Thread.Sleep(500);
-                        confimaLogin();
+                        logar();
+                        //Thread.Sleep(500);
+                        //confimaLogin();
                         Thread.Sleep(500);
                         acessaPasta();
                         Thread.Sleep(500);
