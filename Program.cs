@@ -33,9 +33,6 @@ namespace Robo_Panjur {
                     string interacao = list[7];
 
 
-                    Thread.Sleep(300);
-                    driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
-
                     void logar() {
                         try {
                             driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
@@ -73,15 +70,6 @@ namespace Robo_Panjur {
                         Thread.Sleep(500);
                         txtPassword.SendKeys(Keys.Enter);
 
-                    }
-
-                    void confimaLogin() {
-                        Thread.Sleep(500);
-                        try {
-                            driver.FindElement(By.Name("frmPesquisa"));
-                        } catch (Exception) {
-                            executa();
-                        }
                     }
 
                     void acessaPasta() {
@@ -180,23 +168,20 @@ namespace Robo_Panjur {
                     }
 
                     void executa() {
-                        Thread.Sleep(500);
+                        Thread.Sleep(700);
                         logar();
-                        //Thread.Sleep(500);
-                        //confimaLogin();
-                        Thread.Sleep(500);
+                        Thread.Sleep(700);
                         acessaPasta();
-                        Thread.Sleep(500);
-                        preencherForm();
+                        Thread.Sleep(700);
+                        preencherForm(); 
+                        Thread.Sleep(700);
                     }
 
                     executa();
-
                     Thread.Sleep(2000);
                     Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
                     Console.WriteLine("Contratos atualizados até o momento: " + contador);
                     Console.WriteLine("Ultimo contrato ativo: " + pasta);
-                    //driver.Close(); 
                 }
             }
             Console.WriteLine("Total de contratos atualizado: " + contador);
