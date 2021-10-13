@@ -17,6 +17,47 @@ namespace Robo_Panjur {
             int ignorados = 0;
 
             IWebDriver driver = new InternetExplorerDriver();
+
+            void logar() {
+                try {
+                    driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                } catch (Exception) {
+                    logar();
+                }
+
+                Thread.Sleep(500);
+                try {
+                    driver.FindElement(By.Name("selEscritorio"));
+                } catch (Exception) {
+                    logar();
+                }
+
+                var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
+                selEscritorio.Click();
+                selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
+                Thread.Sleep(500);
+                selEscritorio.SendKeys(Keys.Enter);
+
+                Thread.Sleep(500);
+                var txtLogin = driver.FindElement(By.Name("txtLogin"));
+                txtLogin.Click();
+                Thread.Sleep(500);
+                txtLogin.SendKeys("08300494952");
+                Thread.Sleep(500);
+
+                Thread.Sleep(500);
+                var txtPassword = driver.FindElement(By.Name("txtPassword"));
+                txtPassword.Click();
+                Thread.Sleep(500);
+                txtPassword.SendKeys("Natalia@19");
+                Thread.Sleep(500);
+                txtPassword.SendKeys(Keys.Enter);
+
+            }
+
+            logar();
+
+
             List<string> list = new List<string>();
             using (StreamReader reader = new StreamReader("lista.txt")) {
                 string line;
@@ -33,42 +74,6 @@ namespace Robo_Panjur {
                     string interacao = list[7];
 
 
-                    void logar() {
-                        try {
-                            driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
-                        } catch (Exception) {
-                            executa();
-                        }
-
-                        Thread.Sleep(500);
-                        try {
-                            driver.FindElement(By.Name("selEscritorio"));
-                        } catch (Exception) {
-                            executa();
-                        }
-
-                        var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
-                        selEscritorio.Click();
-                        selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
-                        Thread.Sleep(500);
-                        selEscritorio.SendKeys(Keys.Enter);
-
-                        Thread.Sleep(500);
-                        var txtLogin = driver.FindElement(By.Name("txtLogin"));
-                        txtLogin.Click();
-                        Thread.Sleep(500);
-                        txtLogin.SendKeys("08300494952");
-                        Thread.Sleep(500);
-
-                        Thread.Sleep(500);
-                        var txtPassword = driver.FindElement(By.Name("txtPassword"));
-                        txtPassword.Click();
-                        Thread.Sleep(500);
-                        txtPassword.SendKeys("Natalia@19");
-                        Thread.Sleep(500);
-                        txtPassword.SendKeys(Keys.Enter);
-
-                    }
 
                     void acessaPasta() {
                         Thread.Sleep(500);
@@ -163,8 +168,6 @@ namespace Robo_Panjur {
 
                     void executa() {
                         Thread.Sleep(700);
-                        logar();
-                        Thread.Sleep(700);
                         acessaPasta();
                         Thread.Sleep(700);
                         preencherForm(); 
@@ -175,7 +178,7 @@ namespace Robo_Panjur {
                     Thread.Sleep(2000);
                     Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
                     Console.WriteLine("Contratos atualizados até o momento: " + contador);
-                    Console.WriteLine("Ultimo contrato ativo: " + pasta);
+                    Console.WriteLine("Ultimo contrato ativo: " + pasta + ", estado de: " + estado);
                 }
             }
             Console.WriteLine("Total de contratos atualizado: " + contador);
