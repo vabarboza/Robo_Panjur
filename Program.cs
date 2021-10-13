@@ -36,9 +36,7 @@ namespace Robo_Panjur {
                     void logar() {
                         try {
                             driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
-                        } catch (WebDriverException) {
-                            executa();
-                        } catch (TimeoutException) {
+                        } catch (Exception) {
                             executa();
                         }
 
@@ -76,11 +74,7 @@ namespace Robo_Panjur {
                         Thread.Sleep(500);
                         try {
                             driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
-                        } catch (WebDriverTimeoutException) {
-                            executa();
-                        } catch (WebDriverException) {
-                            executa();
-                        } catch (TimeoutException) {
+                        } catch (Exception) {
                             executa();
                         }
                     }
@@ -89,7 +83,7 @@ namespace Robo_Panjur {
                         Thread.Sleep(500);
                         try {
                             driver.FindElement(By.Name("txtCNJ"));
-                        } catch (WebDriverException) {
+                        } catch (Exception) {
                             executa();
                         }
 
@@ -120,7 +114,7 @@ namespace Robo_Panjur {
                                 selComarca.Click();
                                 selComarca.SendKeys(cidade);
                                 selComarca.SendKeys(Keys.Enter);
-                            } catch (NoSuchElementException) {
+                            } catch (Exception) {
                                 executa();
                             }
                             Thread.Sleep(3000);
@@ -147,7 +141,7 @@ namespace Robo_Panjur {
                             try {
                                 Thread.Sleep(300);
                                 submitUpdate.Click();
-                            } catch (WebDriverException) {
+                            } catch (Exception) {
                                 Thread.Sleep(300);
                                 executa();
                             }
@@ -156,7 +150,7 @@ namespace Robo_Panjur {
                             try {
                                 var alert = driver.SwitchTo().Alert();
                                 alert.Accept();
-                            } catch (WebDriverException) {
+                            } catch (Exception) {
                                 executa();
                             }
 
