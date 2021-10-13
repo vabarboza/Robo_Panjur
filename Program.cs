@@ -16,6 +16,7 @@ namespace Robo_Panjur {
             int contador = 0;
             int ignorados = 0;
 
+            IWebDriver driver = new InternetExplorerDriver();
             List<string> list = new List<string>();
             using (StreamReader reader = new StreamReader("lista.txt")) {
                 string line;
@@ -31,7 +32,7 @@ namespace Robo_Panjur {
                     string comarca = list[6];
                     string interacao = list[7];
 
-                    IWebDriver driver = new InternetExplorerDriver();
+                    
                     Thread.Sleep(300);
                     driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
 
@@ -62,7 +63,7 @@ namespace Robo_Panjur {
                         var txtPassword = driver.FindElement(By.Name("txtPassword"));
                         txtPassword.Click();
                         Thread.Sleep(500);
-                        txtPassword.SendKeys("Natalia@18");
+                        txtPassword.SendKeys("Natalia@19");
                         Thread.Sleep(500);
                         txtPassword.SendKeys(Keys.Enter);
 
@@ -188,7 +189,7 @@ namespace Robo_Panjur {
                     Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
                     Console.WriteLine("Contratos atualizados até o momento: " + contador);
                     Console.WriteLine("Ultimo contrato ativo: " + pasta);
-                    driver.Close();
+                    //driver.Close(); 
                 }
             }
             Console.WriteLine("Total de contratos atualizado: " + contador);
