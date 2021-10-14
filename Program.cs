@@ -30,6 +30,7 @@ namespace Robo_Panjur {
           logar();
         }
 
+
         var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
         selEscritorio.Click();
         selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
