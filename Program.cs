@@ -8,182 +8,375 @@ using OpenQA.Selenium.Support.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Robo_Panjur {
-   class Program {
-      static void Main(string[] args) {
-         int contador = 0;
-         int ignorados = 0;
-         Console.WriteLine("Informe o CPF de acesso: ");
-         var cpf = Console.ReadLine();
-         Console.WriteLine("Informe a senha de acesso");
-         var senha = Console.ReadLine();
+namespace Robo_Panjur
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int contador = 0;
+            int ignorados = 0;
+            Console.WriteLine("Informe o CPF de acesso: ");
+            var cpf = Console.ReadLine();
+            //var cpf = "06142625936";
+            Console.WriteLine("Informe a senha de acesso");
+            var senha = Console.ReadLine();
+            //var senha = "panjur@2023";
 
-         IWebDriver driver = new InternetExplorerDriver();
+            Console.WriteLine("Selecione uma opção: \n 1 - Atualização de informações. \n 2 - Incluir novo acompanhamento");
+            int opcao = Int16.Parse(Console.ReadLine());
 
-         void logar() {   
-            try {
-               driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
-            } catch (Exception) {
-               logar();
+            if (opcao == 1)
+            {
+                Console.WriteLine("Atualização de informações");
+                IWebDriver ie = new InternetExplorerDriver();
+                void logar()
+                {
+                    try
+                    {
+                        ie.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                    }
+                    catch (Exception)
+                    {
+                        logar();
+                    }
+
+                    Thread.Sleep(500);
+                    try
+                    {
+                        ie.FindElement(By.Name("selEscritorio"));
+                    }
+                    catch (Exception)
+                    {
+                        logar();
+                    }
+
+
+                    var selEscritorio = ie.FindElement(By.Name("selEscritorio"));
+                    selEscritorio.Click();
+                    selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
+                    Thread.Sleep(500);
+                    selEscritorio.SendKeys(Keys.Enter);
+
+                    Thread.Sleep(500);
+                    var txtLogin = ie.FindElement(By.Name("txtLogin"));
+                    txtLogin.Click();
+                    Thread.Sleep(500);
+                    txtLogin.SendKeys(cpf);
+                    Thread.Sleep(500);
+
+                    Thread.Sleep(500);
+                    var txtPassword = ie.FindElement(By.Name("txtPassword"));
+                    txtPassword.Click();
+                    Thread.Sleep(500);
+                    txtPassword.SendKeys(senha);
+                    Thread.Sleep(500);
+                    txtPassword.SendKeys(Keys.Enter);
+                }
+
+                logar();
+
+                List<string> list = new List<string>();
+                using (StreamReader reader = new StreamReader("lista.txt"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        list = line.Split(';').ToList();
+
+                        string pasta = list[0];
+                        string processo = list[1];
+                        string cnj = list[2];
+                        string foro = list[3];
+                        string estado = list[4];
+                        string cidade = list[5];
+                        string comarca = list[6];
+                        string interacao = list[7];
+
+                        //Acessa a pasta do contrato.
+                        void acessaPasta()
+                        {
+                            Thread.Sleep(500);
+                            try
+                            {
+                                ie.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                            }
+                            catch (Exception)
+                            {
+                                executa();
+                            }
+                        }
+
+                        //Prenche o form com os dados da lista.
+                        void preencherForm()
+                        {
+                            Thread.Sleep(500);
+                            try
+                            {
+                                ie.FindElement(By.Name("txtCNJ"));
+                            }
+                            catch (Exception)
+                            {
+                                executa();
+                            }
+
+                            Thread.Sleep(500);
+                            var txtCNJ = ie.FindElement(By.Name("txtCNJ"));
+                            var value = txtCNJ.GetAttribute("value");
+                            if (value != cnj)
+                            {
+                                ie.ExecuteJavaScript("document.getElementById('txtNoProcesso').value = '" + processo + "'");
+
+                                ie.ExecuteJavaScript("document.getElementById('txtCNJ').value = '" + cnj + "'");
+
+                                ie.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
+
+                                var radJustGratuita = ie.FindElement(By.Name("radJustGratuita"));
+                                radJustGratuita.Click();
+                                Thread.Sleep(200);
+                                radJustGratuita.SendKeys(Keys.ArrowRight);
+                                Thread.Sleep(200);
+
+                                var txtUF = ie.FindElement(By.Name("txtUF"));
+                                txtUF.Click();
+                                txtUF.SendKeys(estado);
+                                txtUF.SendKeys(Keys.Enter);
+                                Thread.Sleep(2000);
+
+                                try
+                                {
+                                    var selComarca = ie.FindElement(By.Name("selComarca"));
+                                    selComarca.Click();
+                                    selComarca.SendKeys(cidade);
+                                    selComarca.SendKeys(Keys.Enter);
+                                }
+                                catch (Exception)
+                                {
+                                    executa();
+                                }
+                                Thread.Sleep(3000);
+
+                                try
+                                {
+                                    ie.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
+                                }
+                                catch (Exception)
+                                {
+                                    Thread.Sleep(300);
+                                    executa();
+                                }
+
+                                var selEmpresa = ie.FindElement(By.Name("selEmpresa"));
+                                selEmpresa.Click();
+                                selEmpresa.SendKeys("BANCO PAN S/A");
+                                selEmpresa.SendKeys(Keys.Enter);
+                                Thread.Sleep(300);
+
+                                var txtObsAlteracao = ie.FindElement(By.Name("txtObsAlteracao"));
+                                txtObsAlteracao.Click();
+                                txtObsAlteracao.SendKeys(interacao);
+                                Thread.Sleep(1000);
+
+                                var submitUpdate = ie.FindElement(By.Name("submitUpdate"));
+                                try
+                                {
+                                    Thread.Sleep(300);
+                                    submitUpdate.Click();
+                                }
+                                catch (Exception)
+                                {
+                                    Thread.Sleep(300);
+                                    executa();
+                                }
+
+
+                                try
+                                {
+                                    var alert = ie.SwitchTo().Alert();
+                                    alert.Accept();
+                                }
+                                catch (Exception)
+                                {
+                                    executa();
+                                }
+
+                                contador++;
+                            }
+                            else
+                            {
+                                ignorados++;
+                            }
+
+                        }
+
+                        //Chama todos os metodos dentro do While
+                        void executa()
+                        {
+                            Thread.Sleep(700);
+                            acessaPasta();
+                            Thread.Sleep(700);
+                            preencherForm();
+                            Thread.Sleep(700);
+                        }
+
+                        executa();
+                        Thread.Sleep(2000);
+                        Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
+                        Console.WriteLine("Contratos atualizados até o momento: " + contador);
+                        Console.WriteLine("Ultimo contrato ativo: " + pasta + ", estado de: " + estado);
+                    }
+                }
+                Console.WriteLine("Total de contratos atualizado: " + contador);
             }
 
-            Thread.Sleep(500);
-            try {
-               driver.FindElement(By.Name("selEscritorio"));
-            } catch (Exception) {
-               logar();
+            else if (opcao == 2)
+            {
+                Console.WriteLine("Atualização de informações");
+                IWebDriver ie = new InternetExplorerDriver();
+                void logar()
+                {
+                    try
+                    {
+                        ie.Navigate().GoToUrl("https://panjur.panamericano.com.br/");
+                    }
+                    catch (Exception)
+                    {
+                        logar();
+                    }
+
+                    Thread.Sleep(500);
+                    try
+                    {
+                        ie.FindElement(By.Name("selEscritorio"));
+                    }
+                    catch (Exception)
+                    {
+                        logar();
+                    }
+
+
+                    var selEscritorio = ie.FindElement(By.Name("selEscritorio"));
+                    selEscritorio.Click();
+                    selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
+                    Thread.Sleep(500);
+                    selEscritorio.SendKeys(Keys.Enter);
+
+                    Thread.Sleep(500);
+                    var txtLogin = ie.FindElement(By.Name("txtLogin"));
+                    txtLogin.Click();
+                    Thread.Sleep(500);
+                    txtLogin.SendKeys(cpf);
+                    Thread.Sleep(500);
+
+                    Thread.Sleep(500);
+                    var txtPassword = ie.FindElement(By.Name("txtPassword"));
+                    txtPassword.Click();
+                    Thread.Sleep(500);
+                    txtPassword.SendKeys(senha);
+                    Thread.Sleep(500);
+                    txtPassword.SendKeys(Keys.Enter);
+                }
+
+                logar();
+
+                List<string> list = new List<string>();
+                using (StreamReader reader = new StreamReader("lista.txt"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        list = line.Split(';').ToList();
+
+                        string pasta = list[0];
+                        string processo = list[1];
+                        string cnj = list[2];
+                        string foro = list[3];
+                        string estado = list[4];
+                        string cidade = list[5];
+                        string comarca = list[6];
+                        string interacao = list[7];
+
+
+                        //Acessa a pasta do contrato.
+                        void acessaPasta()
+                        {
+                            Thread.Sleep(500);
+                            try
+                            {
+                                ie.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
+                            }
+                            catch (Exception)
+                            {
+                                executa();
+                            }
+                        }
+
+                        //Prenche o form com os dados da lista.
+                        void preencherForm()
+                        {
+                            Thread.Sleep(500);
+                            try
+                            {
+                                ie.FindElement(By.Name("txtCNJ"));
+                            }
+                            catch (Exception)
+                            {
+                                executa();
+                            }
+
+                            try
+                            {
+                                Thread.Sleep(500);
+                                var txtProcInfo = ie.FindElement(By.Id("txtProcInfo"));
+                                txtProcInfo.SendKeys(interacao);
+                            }
+                            catch (Exception)
+                            {
+
+                                executa();
+                            }
+
+
+                            try
+                            {
+                                Thread.Sleep(500);
+                                var btoAcomp = ie.FindElement(By.Id("btoAcomp"));
+                                btoAcomp.Click();
+                            }
+                            catch (Exception)
+                            {
+
+                                executa();
+                            }
+
+
+                            contador++;
+                        }
+
+                        //Chama todos os metodos dentro do While
+                        void executa()
+                        {
+                            Thread.Sleep(700);
+                            acessaPasta();
+                            Thread.Sleep(700);
+                            preencherForm();
+                            Thread.Sleep(700);
+                        }
+
+                        executa();
+                        Thread.Sleep(2000);
+                        Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
+                        Console.WriteLine("Contratos atualizados até o momento: " + contador);
+                        Console.WriteLine("Ultimo contrato ativo: " + pasta + ", estado de: " + estado);
+                    }
+                }
+                Console.WriteLine("Total de contratos atualizado: " + contador);
+            }
+            else
+            {
+                Console.WriteLine("Opção invalida.");
             }
 
-
-            var selEscritorio = driver.FindElement(By.Name("selEscritorio"));
-            selEscritorio.Click();
-            selEscritorio.SendKeys("BELLIANTI PEREZ ADVOCACIA");
-            Thread.Sleep(500);
-            selEscritorio.SendKeys(Keys.Enter);
-
-            Thread.Sleep(500);
-            var txtLogin = driver.FindElement(By.Name("txtLogin"));
-            txtLogin.Click();
-            Thread.Sleep(500);
-            txtLogin.SendKeys(cpf);
-            Thread.Sleep(500);
-
-            Thread.Sleep(500);
-            var txtPassword = driver.FindElement(By.Name("txtPassword"));
-            txtPassword.Click();
-            Thread.Sleep(500);
-            txtPassword.SendKeys(senha);
-            Thread.Sleep(500);
-            txtPassword.SendKeys(Keys.Enter);
-         }
-
-         logar();
-
-         List<string> list = new List<string>();
-         using (StreamReader reader = new StreamReader("lista.txt")) {
-            string line;
-            while ((line = reader.ReadLine()) != null) {
-               list = line.Split(';').ToList();
-
-               string pasta = list[0];
-               string processo = list[1];
-               string cnj = list[2];
-               string foro = list[3];
-               string estado = list[4];
-               string cidade = list[5];
-               string comarca = list[6];
-               string interacao = list[7];
-
-               //Acessa a pasta do contrato.
-               void acessaPasta() {
-                  Thread.Sleep(500);
-                  try {
-                     driver.Navigate().GoToUrl("https://panjur.panamericano.com.br/Assessoria/ProcessoExibe.asp?nat=rec&id=" + pasta);
-                  } catch (Exception) {
-                     executa();
-                  }
-               }
-
-               //Prenche o form com os dados da lista.
-               void preencherForm() {
-                  Thread.Sleep(500);
-                  try {
-                     driver.FindElement(By.Name("txtCNJ"));
-                  } catch (Exception) {
-                     executa();
-                  }
-
-                  Thread.Sleep(500);
-                  var txtCNJ = driver.FindElement(By.Name("txtCNJ"));
-                  var value = txtCNJ.GetAttribute("value");
-                  if (value != cnj) {
-                     driver.ExecuteJavaScript("document.getElementById('txtNoProcesso').value = '" + processo + "'");
-
-                     driver.ExecuteJavaScript("document.getElementById('txtCNJ').value = '" + cnj + "'");
-
-                     driver.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
-
-                     var radJustGratuita = driver.FindElement(By.Name("radJustGratuita"));
-                     radJustGratuita.Click();
-                     Thread.Sleep(200);
-                     radJustGratuita.SendKeys(Keys.ArrowRight);
-                     Thread.Sleep(200);
-
-                     var txtUF = driver.FindElement(By.Name("txtUF"));
-                     txtUF.Click();
-                     txtUF.SendKeys(estado);
-                     txtUF.SendKeys(Keys.Enter);
-                     Thread.Sleep(2000);
-
-                     try {
-                        var selComarca = driver.FindElement(By.Name("selComarca"));
-                        selComarca.Click();
-                        selComarca.SendKeys(cidade);
-                        selComarca.SendKeys(Keys.Enter);
-                     } catch (Exception) {
-                        executa();
-                     }
-                     Thread.Sleep(3000);
-
-                     try {
-                        driver.ExecuteJavaScript("document.getElementById('txtForumNome').value = '" + comarca + "'");
-                     } catch (Exception) {
-                        Thread.Sleep(300);
-                        executa();
-                     }
-
-                     var selEmpresa = driver.FindElement(By.Name("selEmpresa"));
-                     selEmpresa.Click();
-                     selEmpresa.SendKeys("BANCO PAN S/A");
-                     selEmpresa.SendKeys(Keys.Enter);
-                     Thread.Sleep(300);
-
-                     var txtObsAlteracao = driver.FindElement(By.Name("txtObsAlteracao"));
-                     txtObsAlteracao.Click();
-                     txtObsAlteracao.SendKeys(interacao);
-                     Thread.Sleep(1000);
-
-                     var submitUpdate = driver.FindElement(By.Name("submitUpdate"));
-                     try {
-                        Thread.Sleep(300);
-                        submitUpdate.Click();
-                     } catch (Exception) {
-                        Thread.Sleep(300);
-                        executa();
-                     }
-
-
-                     try {
-                        var alert = driver.SwitchTo().Alert();
-                        alert.Accept();
-                     } catch (Exception) {
-                        executa();
-                     }
-
-                     contador++;
-                  } else {
-                     ignorados++;
-                  }
-
-               }
-
-               //Chama todos os metodos dentro do While
-               void executa() {
-                  Thread.Sleep(700);
-                  acessaPasta();
-                  Thread.Sleep(700);
-                  preencherForm();
-                  Thread.Sleep(700);
-               }
-
-               executa();
-               Thread.Sleep(2000);
-               Console.WriteLine("Contratos encontrados já atualizados: " + ignorados);
-               Console.WriteLine("Contratos atualizados até o momento: " + contador);
-               Console.WriteLine("Ultimo contrato ativo: " + pasta + ", estado de: " + estado);
-            }
-         }
-         Console.WriteLine("Total de contratos atualizado: " + contador);
-      }
-   }
+        }
+    }
 }
