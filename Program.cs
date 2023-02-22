@@ -7,6 +7,7 @@ using OpenQA.Selenium.Support;
 using OpenQA.Selenium.Support.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using OpenQA.Selenium.Edge;
 
 namespace Robo_Panjur
 {
@@ -17,11 +18,11 @@ namespace Robo_Panjur
             int contador = 0;
             int ignorados = 0;
             Console.WriteLine("Informe o CPF de acesso: ");
-            var cpf = Console.ReadLine();
-            //var cpf = "06142625936";
+            //var cpf = Console.ReadLine();
+            var cpf = "06209560970";
             Console.WriteLine("Informe a senha de acesso");
-            var senha = Console.ReadLine();
-            //var senha = "panjur@2023";
+           // var senha = Console.ReadLine();
+            var senha = "Daiane@11";
 
             Console.WriteLine("Selecione uma opção: \n 1 - Atualização de informações. \n 2 - Incluir novo acompanhamento");
             int opcao = Int16.Parse(Console.ReadLine());
@@ -29,7 +30,7 @@ namespace Robo_Panjur
             if (opcao == 1)
             {
                 Console.WriteLine("Atualização de informações");
-                IWebDriver ie = new InternetExplorerDriver();
+                IWebDriver ie = new EdgeDriver();
                 void logar()
                 {
                     try
@@ -125,11 +126,19 @@ namespace Robo_Panjur
                             var value = txtCNJ.GetAttribute("value");
                             if (value != cnj)
                             {
-                                ie.ExecuteJavaScript("document.getElementById('txtNoProcesso').value = '" + processo + "'");
+                                var processoValue = ie.FindElement(By.Name("txtNoProcesso"));
+                                processoValue.Click();
+                                processoValue.SendKeys(processo);
 
-                                ie.ExecuteJavaScript("document.getElementById('txtCNJ').value = '" + cnj + "'");
+                                var cnjValue = ie.FindElement(By.Name("txtCNJ"));
+                                cnjValue.Click();
+                                cnjValue.SendKeys(cnj);
 
-                                ie.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
+                                var foroValue = ie.FindElement(By.Name("txtVara"));
+                                foroValue.Click();
+                                foroValue.SendKeys(foro);
+
+                                //ie.ExecuteJavaScript("document.getElementById('txtVara').value = '" + foro + "'");
 
                                 var radJustGratuita = ie.FindElement(By.Name("radJustGratuita"));
                                 radJustGratuita.Click();
@@ -232,7 +241,7 @@ namespace Robo_Panjur
             else if (opcao == 2)
             {
                 Console.WriteLine("Atualização de informações");
-                IWebDriver ie = new InternetExplorerDriver();
+                IWebDriver ie = new EdgeDriver();
                 void logar()
                 {
                     try
