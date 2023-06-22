@@ -20,11 +20,11 @@ namespace Robo_Panjur {
          IWebDriver ie;
 
          Console.WriteLine("Informe o CPF de acesso: ");
-         var cpf = Console.ReadLine();
-         //var cpf = "06209560970";
+         //var cpf = Console.ReadLine();
+         var cpf = "21564895807";
          Console.WriteLine("Informe a senha de acesso");
-         var senha = Console.ReadLine();
-         //var senha = "Daiane@21";
+         //var senha = Console.ReadLine();
+         var senha = "Palone2023@1";
 
          Console.WriteLine("Selecione o naegador: 1 = Edge, 2 = Chrome, 3 Firefox ");
          var webDriver = Int16.Parse(Console.ReadLine());
